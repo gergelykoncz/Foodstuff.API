@@ -2,7 +2,6 @@ using FoodStuff.Services.Dto;
 using FoodStuff.Services.Facades;
 using FoodStuff.Services.Providers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace FoodStuff.WebAPI.Controllers
 {

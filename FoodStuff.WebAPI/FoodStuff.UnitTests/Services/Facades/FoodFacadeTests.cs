@@ -1,0 +1,29 @@
+﻿using FoodStuff.Data.Entities;
+using FoodStuff.Data.Repositories;
+using FoodStuff.Services.Dto;
+using FoodStuff.Services.Facades;
+using FoodStuff.UnitTests.Utils;
+using Moq;
+using System.Linq.Expressions;
+
+namespace FoodStuff.UnitTests.Services.Facades
+{
+    public class FoodFacadeTests
+    {
+        [Test]
+        public async Task GetFoodsByCategory_Should_Return_Page()
+        {
+            var data = new List<Food>() {
+                new Food(){Id=1, Name="Test Food 1", Ingredients = "", FoodCategoryId = 1 },
+                new Food(){Id=2, Name="Test Food 2", Ingredients = "", FoodCategoryId = 2 }
+            }.AsQueryable();
+
+            Mock<IRepository<Food>> repositoryMock = new Mock<IRepository<Food>>();
+            repositoryMock.Setup(x => x.Filter(It.IsAny<Expression<Func<Food, bool>>>())).Returns<Expression<Func<Food, bool>>>(x => new TestDbAsyncEnumerable<Food>(data.Where(x)));
+
+            FoodFacade sut = new FoodFacade(repositoryMock.Object);
+            IEnumerable<FoodDto> result = await sut.GetFoodsByCategory(2, 0, 10);
+            Assert.AreEqual(result.ElementAt(0).Name, "Test Food 2");
+        }
+    }
+}

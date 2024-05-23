@@ -26,8 +26,11 @@ builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
 
 builder.Services.AddDbContext<FoodstuffContext>();
 
-builder.Services.AddScoped<IRepository<FoodCategory>, FoodCategoryRepository>();
+builder.Services.AddScoped<IRepository<FoodCategory>, BaseRepository<FoodCategory>>();
+builder.Services.AddScoped<IRepository<Food>, BaseRepository<Food>>();
+
 builder.Services.AddScoped<IFoodCategoryFacade, FoodCategoryFacade>();
+builder.Services.AddScoped<IFoodFacade, FoodFacade>();
 
 var app = builder.Build();
 
