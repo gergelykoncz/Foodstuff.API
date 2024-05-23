@@ -3,12 +3,8 @@
     public class FoodCategoryDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
+        public int Count { get; set; }
 
-        public FoodCategoryDto(int id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
     }
 }

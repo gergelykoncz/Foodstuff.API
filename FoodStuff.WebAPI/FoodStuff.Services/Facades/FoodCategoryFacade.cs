@@ -16,8 +16,15 @@ namespace FoodStuff.Services.Facades
 
         public async Task<IEnumerable<FoodCategoryDto>> GetCategories()
         {
-            IEnumerable<FoodCategory> result = await _foodCategoryRepository.GetAll().ToListAsync();
-            return result.Select(x => new FoodCategoryDto(x.Id, x.Name));
+            var dbResult = await _foodCategoryRepository.GetAll().Include(c => c.Foods).Select(x => new
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Count = x.Foods.Count
+            }).ToListAsync();
+
+            return dbResult.Select(x => new FoodCategoryDto { Id = x.Id, Name = x.Name, Count = x.Count });
+
         }
     }
 }
