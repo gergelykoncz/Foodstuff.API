@@ -19,10 +19,10 @@ namespace FoodStuff.WebAPI.Controllers
         }
 
         [HttpGet(Name = "GetFoodsByCategoryId")]
-        public async Task<IEnumerable<FoodDto>> Get(int categoryId, int page = 0, int pageSize = 10)
+        public async Task<PageableFoodDto> Get(int categoryId, int page = 0, int pageSize = 10)
         {
             string cacheKey = $"foods:{categoryId}:{page}:{pageSize}";
-            var result = await _cacheProvider.GetFromCache<IEnumerable<FoodDto>>(cacheKey);
+            var result = await _cacheProvider.GetFromCache<PageableFoodDto>(cacheKey);
             if (result == null)
             {
                 result = await _facade.GetFoodsByCategory(categoryId, page, pageSize);

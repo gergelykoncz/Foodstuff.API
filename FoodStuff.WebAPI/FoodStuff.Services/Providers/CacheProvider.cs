@@ -25,7 +25,18 @@ namespace FoodStuff.Services.Providers
             {
                 return null;
             }
-            return JsonConvert.DeserializeObject<T>(response);
+
+            T result = null;
+
+            try
+            {
+                result = JsonConvert.DeserializeObject<T>(response);
+            }
+            catch 
+            {
+                await RemoveFromCache(cacheKey);
+            }
+            return result;
         }
 
         public async Task RemoveFromCache(string cacheKey)

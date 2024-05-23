@@ -56,6 +56,20 @@ namespace FoodStuff.UnitTests.Services.Providers
             }
 
             [Test]
+            public async Task GetFromCache_Should_Not_Fail_For_Invalid_Object()
+            {
+                var invalidBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("new object") );
+
+                Mock <IDistributedCache> cacheMock = new Mock<IDistributedCache>();
+                cacheMock.Setup(x => x.GetAsync("key", It.IsAny<CancellationToken>())).Returns(Task.FromResult(invalidBytes));
+                var cacheProvider = new CacheProvider(cacheMock.Object);
+
+                var result = await cacheProvider.GetFromCache<TestObject>("key");
+                Assert.IsNull(result);
+                cacheMock.Verify(x => x.RemoveAsync("key", It.IsAny<CancellationToken>()));
+            }
+
+            [Test]
             public async Task RemoveFromCache_Should_Call_Remove()
             {
                 Mock<IDistributedCache> cacheMock = new Mock<IDistributedCache>();

@@ -22,8 +22,10 @@ namespace FoodStuff.UnitTests.Services.Facades
             repositoryMock.Setup(x => x.Filter(It.IsAny<Expression<Func<Food, bool>>>())).Returns<Expression<Func<Food, bool>>>(x => new TestDbAsyncEnumerable<Food>(data.Where(x)));
 
             FoodFacade sut = new FoodFacade(repositoryMock.Object);
-            IEnumerable<FoodDto> result = await sut.GetFoodsByCategory(2, 0, 10);
-            Assert.AreEqual(result.ElementAt(0).Name, "Test Food 2");
+            PageableFoodDto result = await sut.GetFoodsByCategory(2, 0, 10);
+            Assert.AreEqual(result.Foods.ElementAt(0).Name, "Test Food 2");
+            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result.CurrentPage, 0);
         }
     }
 }

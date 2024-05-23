@@ -14,10 +14,18 @@ namespace FoodStuff.Services.Facades
             _repository = repository;
         }
 
-        public async Task<IEnumerable<FoodDto>> GetFoodsByCategory(int categoryId, int page, int pageSize)
+        public async Task<PageableFoodDto> GetFoodsByCategory(int categoryId, int page, int pageSize)
         {
-            var result = await _repository.Filter(x => x.FoodCategoryId == categoryId).Skip(page * pageSize).Take(pageSize).ToListAsync();
-            return result.Select(x => new FoodDto() { Id = x.Id, Name = x.Name, Ingredients = x.Ingredients });
+            int validPage = Math.Max(0, page);
+            var count = _repository.Filter(x => x.FoodCategoryId == categoryId).Count();
+            var result = await _repository.Filter(x => x.FoodCategoryId == categoryId).Skip(validPage * pageSize).Take(pageSize).ToListAsync();
+            return
+                new PageableFoodDto()
+                {
+                    Foods = result.Select(x => new FoodDto() { Id = x.Id, Name = x.Name, Ingredients = x.Ingredients }),
+                    Count = count,
+                    CurrentPage = page
+                };
         }
     }
 }
