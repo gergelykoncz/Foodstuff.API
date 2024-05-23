@@ -9,14 +9,8 @@ namespace FoodStuff.UnitTests.Services.Facades
 {
     public class FoodCategoryFacadeTests
     {
-        [SetUp]
-        public void Setup()
-        {
-
-        }
-
         [Test]
-        public async Task Test1()
+        public async Task GetAll_Should_Return_All_Items_From_Repository()
         {
             var data = new List<FoodCategory>() {
                 new FoodCategory(){Id=1, Name="Test Category"}
