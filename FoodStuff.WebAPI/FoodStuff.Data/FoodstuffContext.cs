@@ -23,7 +23,7 @@ public partial class FoodstuffContext : DbContext
     public virtual DbSet<FoodCategory> FoodCategories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=ConnectionStrings:Foodstuff");
+        => optionsBuilder.UseNpgsql("Name=ConnectionStrings:Foodstuff");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
