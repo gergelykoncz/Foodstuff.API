@@ -21,14 +21,7 @@ namespace FoodStuff.WebAPI.Controllers
         [HttpGet(Name = "GetCategories")]
         public async Task<IEnumerable<FoodCategoryDto>> Get()
         {
-            var result = await _cacheProvider.GetFromCache<IEnumerable<FoodCategoryDto>>("categories");
-            if (result == null)
-            {
-                result = await _facade.GetCategories();
-                await _cacheProvider.AddToCache("categories", result);
-            }
-
-            return result;
+            return await _cacheProvider.AddToCacheIfNotExistsThenReturnIt<IEnumerable<FoodCategoryDto>>("categories", () => _facade.GetCategories());
         }
     }
 }

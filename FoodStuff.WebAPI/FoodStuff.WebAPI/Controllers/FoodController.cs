@@ -22,14 +22,7 @@ namespace FoodStuff.WebAPI.Controllers
         public async Task<PageableFoodDto> Get(int categoryId, int page = 0, int pageSize = 10)
         {
             string cacheKey = $"foods:{categoryId}:{page}:{pageSize}";
-            var result = await _cacheProvider.GetFromCache<PageableFoodDto>(cacheKey);
-            if (result == null)
-            {
-                result = await _facade.GetFoodsByCategory(categoryId, page, pageSize);
-                await _cacheProvider.AddToCache(cacheKey, result);
-            }
-
-            return result;
+            return await _cacheProvider.AddToCacheIfNotExistsThenReturnIt<PageableFoodDto>(cacheKey, () => _facade.GetFoodsByCategory(categoryId, page, pageSize));
         }
     }
 }

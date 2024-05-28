@@ -18,6 +18,17 @@ namespace FoodStuff.Services.Providers
             await _cache.SetStringAsync(cacheKey, serialized);
         }
 
+        public async Task<T> AddToCacheIfNotExistsThenReturnIt<T>(string cacheKey, Func<Task<T>> wrappedCall) where T: class
+        {
+            var response = await this.GetFromCache<T>(cacheKey);
+            if (response == null)
+            {
+                response = await wrappedCall();
+                this.AddToCache(cacheKey, response);
+            }
+            return response;
+        }
+
         public async Task<T> GetFromCache<T>(string cacheKey) where T : class
         {
             var response = await _cache.GetStringAsync(cacheKey);

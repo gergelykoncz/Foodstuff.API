@@ -79,6 +79,36 @@ namespace FoodStuff.UnitTests.Services.Providers
 
                 cacheMock.Verify(x => x.RemoveAsync("key", It.IsAny<CancellationToken>()));
             }
+
+            [Test]
+            public async Task AddToCacheIfNotExistsThenReturnIt_Should_Add_And_Return()
+            {
+                Mock<IDistributedCache> cacheMock = new Mock<IDistributedCache>();
+                var cacheProvider = new CacheProvider(cacheMock.Object);
+
+                var result = await cacheProvider.AddToCacheIfNotExistsThenReturnIt<TestObject>("key", () => Task.FromResult(_testObject));
+
+                cacheMock.Verify(x => x.SetAsync("key", _expectedBytes, It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
+
+                Assert.AreEqual(_testObject.Id, result.Id);
+                Assert.AreEqual(_testObject.Name, result.Name);
+            }
+
+            [Test]
+            public async Task AddToCacheIfNotExistsThenReturnIt_Should_Return_If_Exists()
+            {
+                Mock<IDistributedCache> cacheMock = new Mock<IDistributedCache>();
+                var cacheProvider = new CacheProvider(cacheMock.Object);
+
+                cacheMock.Setup(x => x.GetAsync("key", It.IsAny<CancellationToken>())).Returns(Task.FromResult(_expectedBytes));
+
+                var result = await cacheProvider.AddToCacheIfNotExistsThenReturnIt<TestObject>("key", () => Task.FromResult(_testObject));
+
+                cacheMock.Verify(x => x.SetAsync("key", It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()), Times.Never());
+
+                Assert.AreEqual(_testObject.Id, result.Id);
+                Assert.AreEqual(_testObject.Name, result.Name);
+            }
         }
     }
 }
